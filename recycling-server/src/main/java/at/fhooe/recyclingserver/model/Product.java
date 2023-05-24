@@ -1,5 +1,6 @@
 package at.fhooe.recyclingserver.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,6 +18,7 @@ import java.util.List;
 public class Product {
     @Id
     @GeneratedValue
+    @JsonIgnore
     private long id;
 
     @Column(unique = true, nullable = false)
