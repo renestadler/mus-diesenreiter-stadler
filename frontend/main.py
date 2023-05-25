@@ -4,6 +4,7 @@ import imutils
 from tkinter import *
 import cv2
 from PIL import Image, ImageTk
+from urllib.request import urlopen
 
 # Define a video capture object
 vid = cv2.VideoCapture(0)
@@ -54,15 +55,24 @@ img_lbl.grid_columnconfigure(1, weight=1)
 def get_recycling_info(barcode):
     # request
     try:
-        response = requests.get(f'http://localhost:8080/product?barcode={barcode.data}')
-        recycling_info = ""
+        response = requests.get(f'http://localhost:8080/product?barcode={barcode.data.decode("utf-8")}')
+
+        response = response.json()
+        recycling_info = ''
     except:
         print("Could not establish connection to backend")
         recycling_info = "Server down"
 
+    u = urlopen(response['image'])
+    raw_data = u.read()
+    u.close()
+
+    photo = ImageTk.PhotoImage(data=raw_data)  # <-----
+
     # show recycling info
-    img_lbl.configure(image='')
+    img_lbl.configure(image=photo)
     img_lbl.configure(text=recycling_info)
+    img_lbl.image = photo
 
     btn_scan.grid(row=1, column=0, padx=10, pady=10)
 

@@ -63,8 +63,14 @@ public class OpenFoodFactsProductClient implements ProductClient {
         RestTemplate restTemplate = new RestTemplate();
         ProductResponseDto response = restTemplate.getForObject(BASE_URL + "api/v2/product/" + code + "?fields=packagings,generic_name,image_url", ProductResponseDto.class);
         assert response != null;
-        if (response.getStatus() == 0 || response.getProduct().getGeneric_name() == null || response.getProduct().getImage_url() == null) {
+        if (response.getStatus() == 0 || response.getCode()==null) {
             return Optional.empty();
+        }
+        if(response.getProduct().getGeneric_name()==null){
+            response.getProduct().setGeneric_name("");
+        }
+        if(response.getProduct().getImage_url()==null){
+            response.getProduct().setImage_url("");
         }
         List<Packaging> packagings = new ArrayList<>();
         for (ProductPackagingDto packagingDto : response.getProduct().getPackagings()) {
