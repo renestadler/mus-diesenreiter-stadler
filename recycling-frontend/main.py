@@ -10,6 +10,7 @@ from urllib.request import urlopen
 
 # PROPERTIES
 vid_width, vid_height = 400, 600
+# vid_width, vid_height = 2592, 1944 # for raspberry
 info_label_width = 60
 t1 = textwrap.fill("Just click the \"Scan\" button and aim the barcode of any product at the camera.", width=65)
 t2 = textwrap.fill("Waste Wizard will swiftly identify the item and provide you  with essential information on how to "
@@ -23,6 +24,7 @@ scanning_error_text = "\n\nWe found more than one barcode, make sure to scan onl
 vid = cv2.VideoCapture(0)
 vid.set(cv2.CAP_PROP_FRAME_WIDTH, vid_width)
 vid.set(cv2.CAP_PROP_FRAME_HEIGHT, vid_height)
+vid.set(cv2.CAP_PROP_BUFFERSIZE, 1)
 
 # Create a GUI app
 app = Tk()
@@ -69,6 +71,7 @@ def get_recycling_info(barcode):
     # request
     try:
         response = requests.get(f'http://localhost:8080/product?barcode={barcode.data.decode("utf-8")}')
+#        response = requests.get(f'http://192.168.43.82:8080/product?barcode={barcode.data.decode("utf-8")}')
 
         response = response.json()
         recycling_info_text = "TODO: build recycling info text"
@@ -131,10 +134,10 @@ def scan_barcode():
         roi_start_y = 40
         roi_end_x = 490
         roi_end_y = 150
-        cv2.rectangle(gray, (roi_start_x, roi_start_y), (roi_end_x, roi_end_y), (0, 255, 0), 2)
+        cv2.rectangle(video_frame, (roi_start_x, roi_start_y), (roi_end_x, roi_end_y), (0, 255, 0), 2)
 
         # Convert the frame to PIL format
-        img = Image.fromarray(gray)
+        img = Image.fromarray(video_frame)
 
         # Convert PIL image to Tkinter-compatible photoimage
         photo_image = ImageTk.PhotoImage(image=img)
