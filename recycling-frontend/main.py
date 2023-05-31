@@ -70,8 +70,8 @@ def get_recycling_info(barcode):
 
     # request
     try:
-        response = requests.get(f'http://localhost:8080/product?barcode={barcode.data.decode("utf-8")}')
-#        response = requests.get(f'http://192.168.43.82:8080/product?barcode={barcode.data.decode("utf-8")}')
+        response = requests.get(f'https://recycling-server.azurewebsites.net/product?barcode={barcode.data.decode("utf-8")}')
+        #response = requests.get(f'http://localhost:8080/product?barcode={barcode.data.decode("utf-8")}')
 
         response = response.json()
         recycling_info_text = "TODO: build recycling info text"
