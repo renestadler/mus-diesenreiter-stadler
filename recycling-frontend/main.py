@@ -1,100 +1,55 @@
-from tkinter import ttk
+import asyncio
 import textwrap
-import requests
-from pyzbar import pyzbar
-import imutils
 from tkinter import *
-import cv2
-from PIL import Image, ImageTk
-from urllib.request import urlopen
+from tkinter import ttk
 
-# PROPERTIES
-vid_width, vid_height = 400, 600
+import cv2
+import imutils
+from PIL import Image, ImageTk
+from pyzbar import pyzbar
+
+from data import get_recycling_data
+
+# region Properties
 # vid_width, vid_height = 2592, 1944 # for raspberry
+vid_width, vid_height = 400, 600
+screen_width, screen_height = 800, 480
+img_width, img_height = int(screen_width * .5), int(screen_height * .9)
+
 info_label_width = 60
 t1 = textwrap.fill("Just click the \"Scan\" button and aim the barcode of any product at the camera.", width=65)
-t2 = textwrap.fill("Waste Wizard will swiftly identify the item and provide you  with essential information on how to "
+t2 = textwrap.fill("Waste Wizard will swiftly identify the item and provide you with essential information on how to "
                    "dispose of it responsibly.", width=65)
 welcome_text = "\n\nMake a difference and reduce waste and become an eco-warrior!\n\n\n" + t1 + "\n" + t2 + "\n"
 
 scanning_text = "\n\nMake sure to match the barcode to the box"
 scanning_error_text = "\n\nWe found more than one barcode, make sure to scan only one at a time"
 
-# Define a video capture object
-vid = cv2.VideoCapture(0)
-vid.set(cv2.CAP_PROP_FRAME_WIDTH, vid_width)
-vid.set(cv2.CAP_PROP_FRAME_HEIGHT, vid_height)
-vid.set(cv2.CAP_PROP_BUFFERSIZE, 1)
 
-# Create a GUI app
-app = Tk()
+# endregion
 
-# Configure the default style for ttk elements
-style = ttk.Style()
-style.theme_use('default')
-style.configure('TFrame', background='white')
-style.configure('TLabel', background='white')
-
-# Set the window icon + title
-ico = Image.open('logos/logo_small_solo_cropped.png')
-photo = ImageTk.PhotoImage(ico)
-app.wm_iconphoto(False, photo)
-app.title("Waste Wizard")
-
-# Add a frame to set the size of the window
-outer_frame = ttk.Frame(app, padding=(3, 3, 12, 12))
-
-# Add a frame to display images
-left_frame = ttk.Frame(outer_frame, borderwidth=5, width=620, height=600)  # relief="ridge", width=620, height=600)
-
-# Define the logo to be displayed as the first image, within a label in the image frame
-img_logo = Image.open("logos/logo_big.png")
-photo = ImageTk.PhotoImage(img_logo)
-img_lbl = Label(left_frame, image=photo, bd=0)
-img_lbl.image = photo
-img_lbl.configure(highlightthickness=0)
-img_lbl.pack()
-app.update()
-print("logo: (", photo.height(), photo.width(), ")")
-
-# Define a label to display recycling info
-info_lbl = ttk.Label(outer_frame, text=welcome_text, width=info_label_width)  # , wraplengt=info_label_width*6)
-
-
-# LOGIC
-def get_recycling_info(barcode):
-    # enable scan button
-    # scan_btn.grid(column=0, row=3, sticky=(N, W), padx=10)
+# region Logic
+async def get_recycling_info(barcode):
     recycling_info_text = "Getting your info's ..."
     info_lbl.config(text=recycling_info_text)
 
-    # request
-    try:
-        response = requests.get(f'https://recycling-server.azurewebsites.net/product?barcode={barcode.data.decode("utf-8")}')
-        #response = requests.get(f'http://localhost:8080/product?barcode={barcode.data.decode("utf-8")}')
+    data = await get_recycling_data(barcode)
 
-        response = response.json()
-        recycling_info_text = "TODO: build recycling info text"
-    except:
-        print("Can not establish connection to backend")
-        recycling_info_text = "Server down"
+    text = "\n\n"
+    if data[0] != '' and data[0] is not None:
+        text += "Name:\t" + data[0]
+    text += "\n\nRecyclinginformationen:\n\n"
+    text += "\n".join(data[1])
 
-    try:
-        # TODO response checken, falls artikel nicht gefunden wurde -> not_found image + text
-        u = urlopen(response['image'])
-        raw_data = u.read()
-        u.close()
-        # TODO resize image
-        photo = ImageTk.PhotoImage(data=raw_data)
-    except:
-        print("Can not open product image")
-        img_not_found = Image.open("logos/no_image.png")
-        photo = ImageTk.PhotoImage(img_not_found)
+    recycling_info_text = text
+    photo = ImageTk.PhotoImage(data[2].resize((400, 480)))
 
     # show recycling info
     img_lbl.configure(image=photo)
     img_lbl.image = photo
     info_lbl.config(text=recycling_info_text)
+
+    scan_btn["state"] = "enabled"
 
 
 def scan_barcode():
@@ -128,14 +83,6 @@ def scan_barcode():
                     print("Barcode Data:", barcode_data)
                     keep_looping = False
 
-        # TODO redo roi
-        # Draw a Region of Interest (ROI) rectangle on the frame
-        roi_start_x = 10
-        roi_start_y = 40
-        roi_end_x = 490
-        roi_end_y = 150
-        cv2.rectangle(video_frame, (roi_start_x, roi_start_y), (roi_end_x, roi_end_y), (0, 255, 0), 2)
-
         # Convert the frame to PIL format
         img = Image.fromarray(video_frame)
 
@@ -150,8 +97,51 @@ def scan_barcode():
         if keep_looping:
             img_lbl.after(10, scan_barcode)
         else:
-            get_recycling_info(barcode)
+            asyncio.run(get_recycling_info(barcode))
 
+
+# endregion
+
+# Define a video capture object
+vid = cv2.VideoCapture(0)
+vid.set(cv2.CAP_PROP_FRAME_WIDTH, vid_width)
+vid.set(cv2.CAP_PROP_FRAME_HEIGHT, vid_height)
+vid.set(cv2.CAP_PROP_BUFFERSIZE, 1)
+
+# Create a GUI app
+app = Tk()
+
+# Configure the default style for ttk elements
+style = ttk.Style()
+style.theme_use('default')
+style.configure('TFrame', background='white')
+style.configure('TLabel', background='white')
+
+# Set the window icon + title
+ico = Image.open('logos/logo_small_solo_cropped.png')
+photo = ImageTk.PhotoImage(ico)
+app.wm_iconphoto(False, photo)
+app.title("Waste Wizard")
+app.geometry(str(screen_width) + "x" + str(screen_height))
+
+# Add a frame to set the size of the window
+outer_frame = ttk.Frame(app, padding=(3, 3, 12, 12))
+
+# Add a frame to display images
+left_frame = ttk.Frame(outer_frame, borderwidth=5, width=img_width, height=img_height)
+
+# Define the logo to be displayed as the first image, within a label in the image frame
+img_logo = Image.open("logos/logo_big.png")
+img_logo.resize((img_width, img_height))
+photo = ImageTk.PhotoImage(img_logo)
+img_lbl = Label(left_frame, image=photo, bd=0)
+img_lbl.image = photo
+img_lbl.configure(highlightthickness=0)
+img_lbl.pack()
+app.update()
+
+# Define a label to display recycling info
+info_lbl = ttk.Label(outer_frame, text=welcome_text, width=info_label_width)  # , wraplengt=info_label_width*6)
 
 # Define the scan button
 scan_btn = ttk.Button(outer_frame, text="Scan barcode", command=scan_barcode)
@@ -160,7 +150,7 @@ scan_btn = ttk.Button(outer_frame, text="Scan barcode", command=scan_barcode)
 outer_frame.grid(column=0, row=0, sticky=(N, S, E, W))
 left_frame.grid(column=0, row=0, columnspan=3, rowspan=2, sticky=(N, S, E, W))
 info_lbl.grid(column=3, row=0, columnspan=2, sticky=(N, W))
-scan_btn.grid(column=0, row=3, sticky=(N, W), padx=10)
+scan_btn.grid(column=0, row=3, columnspan=3, sticky="news", padx=10)
 app.columnconfigure(0, weight=1)
 app.rowconfigure(0, weight=1)
 outer_frame.columnconfigure(0, weight=3)
