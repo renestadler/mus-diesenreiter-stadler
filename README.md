@@ -8,8 +8,6 @@ Make a difference and reduce waste with our innovative app. WasteWizard is your 
 <br/>
 
 ## Architecture
----------------------------
-
 
 ![image](readme-imgs/waste_wizard_architecture.png)
 
@@ -19,7 +17,7 @@ The application comprises a frontend connected to a corresponding server, provid
 <br/>
 
 ## Implementation and Usage Guides
----------------------------
+
 
 [Frontend](recycling-frontend/README.md)
 

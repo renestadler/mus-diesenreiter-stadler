@@ -2,6 +2,11 @@
 
 The module utilizes a combination of computer vision, barcode decoding, and data retrieval to provide users with recycling and packaging information.
 
+![frontend](../readme-imgs/waste_wizard_frontend.png)
+
+<br/>
+<br/>
+
 ## Prerequisites
 We recommedn using [PyCharm](https://www.jetbrains.com/de-de/pycharm/) as an IDE. 
 
@@ -15,12 +20,18 @@ Fruthermore, ensure that you have the following dependencies installed:
 - tkinter
 - ttk
 
-### Getting Started
+<br/>
+<br/>
+
+## Getting Started
 1. Ensure that the required dependencies are installed using pip or any other package manager you prefer.
 2. Adjust the video capture settings (vid_width and vid_height) according to your camera's specifications if necessary.
 3. Run the main Python script, [main.py](main.py).
 
-### Functionality
+<br/>
+<br/>
+
+## Functionality
 Upon launching the frontend, the application window will open, featuring a graphical user interface (GUI) with a "Scan barcode" button and an information label. Here's how the application works:
 
 1. Click the ```Scan barcode``` button: This will initiate the barcode scanning process.
@@ -30,13 +41,16 @@ Upon launching the frontend, the application window will open, featuring a graph
 5. Display of information: The GUI updates to display the product's name, recycling information, and packaging details. An image of the product, if available, is also shown.
 6. Scan again or exit: Once the information is displayed, you can either click the ```Scan barcode``` button again to scan another item or exit the application.
 
-![frontend](../readme-imgs/waste_wizard_frontend.png)
+<br/>
+<br/>
 
+## Modifying the Backend and API
+By default, WasteWizard is set to retrieve data from a backend server hosted on localhost or azure. If you have a different backend server or API endpoint, you can modify the `retrieve_data()` function to use the appropriate URL.
 
-### Modifying the Backend and API
-By default, WasteWizard is set to retrieve data from a backend server hosted on http://localhost:8080/product. If you have a different backend server or API endpoint, you can modify the `retrieve_data()` function to use the appropriate URL.
+<br/>
+<br/>
 
-### Customization
+## Customization
 You can customize WasteWizard by adjusting various parameters within the code:
 - vid_width and vid_height: Set the desired width and height for video frame capture.
 - screen_width and screen_height: Define the dimensions of the application window.
@@ -44,9 +58,12 @@ You can customize WasteWizard by adjusting various parameters within the code:
 - info_label_width: Control the width of the information label in characters.
 - t1 and t2: Modify the text displayed in the welcome message and scanning prompts.
 
-### Known Limitations
-- WasteWizard is currently designed to work with webcams or camera devices connected to the local machine. For other devices or setups, modifications to the video capture code may be necessary.
-- The availability and accuracy of recycling and packaging information depend on the backend server or Open Food Facts API.
+<br/>
+<br/>
+
+## Known Limitations
+- WasteWizard is currently designed to work with webcams or camera devices connected to a local Raspberry Pi. For other devices or setups, modifications to the video capture code may be necessary.
+- The availability and accuracy of recycling and packaging information depends on the backend server or Open Food Facts API.
 - Barcode scanning may be affected by lighting conditions, image quality, or barcode types not supported by the pyzbar library.
 
 
