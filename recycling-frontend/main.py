@@ -9,6 +9,7 @@ from PIL import Image, ImageTk
 from pyzbar import pyzbar
 
 from data import get_recycling_data
+from async_tkinter_loop import async_mainloop, async_handler
 
 # region Properties
 # vid_width, vid_height = 2592, 1944 # for raspberry
@@ -52,7 +53,7 @@ async def get_recycling_info(barcode):
     scan_btn["state"] = "enabled"
 
 
-def scan_barcode():
+async def scan_barcode():
     # disable scan button
     scan_btn["state"] = "disabled"
     info_lbl.config(text=scanning_text)
@@ -95,9 +96,9 @@ def scan_barcode():
 
         # Schedule the next frame processing and barcode scanning
         if keep_looping:
-            img_lbl.after(10, scan_barcode)
+            img_lbl.after(10, async_handler(scan_barcode))
         else:
-            asyncio.run(get_recycling_info(barcode))
+            await get_recycling_info(barcode)
 
 
 # endregion
@@ -144,7 +145,7 @@ app.update()
 info_lbl = ttk.Label(outer_frame, text=welcome_text, width=info_label_width)  # , wraplengt=info_label_width*6)
 
 # Define the scan button
-scan_btn = ttk.Button(outer_frame, text="Scan barcode", command=scan_barcode)
+scan_btn = ttk.Button(outer_frame, text="Scan barcode", command=async_handler(scan_barcode))
 
 # Place all within the main window
 outer_frame.grid(column=0, row=0, sticky=(N, S, E, W))
@@ -160,4 +161,4 @@ outer_frame.columnconfigure(3, weight=1)
 outer_frame.columnconfigure(4, weight=1)
 outer_frame.rowconfigure(1, weight=1)
 
-app.mainloop()
+async_mainloop(app)
