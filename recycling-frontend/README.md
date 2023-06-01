@@ -8,9 +8,9 @@ The module utilizes a combination of computer vision, barcode decoding, and data
 <br/>
 
 ## Prerequisites
-We recommedn using [PyCharm](https://www.jetbrains.com/de-de/pycharm/) as an IDE. 
+We recommend using [PyCharm](https://www.jetbrains.com/de-de/pycharm/) as an IDE. 
 
-Fruthermore, ensure that you have the following dependencies installed:
+Furthermore, ensure that you have the following dependencies installed:
 - Python (version 3.6 or above)
 - OpenCV (cv2)
 - imutils
@@ -26,7 +26,8 @@ Fruthermore, ensure that you have the following dependencies installed:
 ## Getting Started
 1. Ensure that the required dependencies are installed using pip or any other package manager you prefer.
 2. Adjust the video capture settings (vid_width and vid_height) according to your camera's specifications if necessary.
-3. Run the main Python script, [main.py](main.py).
+3. Adjust the screen size settings (screen_width and screen_height) according to your screen's specifications if necessary.
+4. Run the main Python script, [main.py](main.py).
 
 <br/>
 <br/>
@@ -45,7 +46,9 @@ Upon launching the frontend, the application window will open, featuring a graph
 <br/>
 
 ## Modifying the Backend and API
-By default, WasteWizard is set to retrieve data from a backend server hosted on localhost or azure. If you have a different backend server or API endpoint, you can modify the `retrieve_data()` function to use the appropriate URL.
+By default, WasteWizard is set to retrieve data from a backend server hosted on localhost or azure. 
+If you have a different backend server or API endpoint, you can modify the `retrieve_data()` function to use the appropriate URL.
+This function is located in `data.py`.
 
 <br/>
 <br/>
