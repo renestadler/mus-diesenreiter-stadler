@@ -5,8 +5,10 @@ import at.fhooe.recyclingserver.client.entity.PackagingResponseDto;
 import at.fhooe.recyclingserver.client.entity.ProductPackagingDto;
 import at.fhooe.recyclingserver.client.entity.ProductResponseDto;
 import at.fhooe.recyclingserver.jpa.PackagingRepository;
+import at.fhooe.recyclingserver.jpa.RecyclingInfoRepository;
 import at.fhooe.recyclingserver.model.Packaging;
 import at.fhooe.recyclingserver.model.Product;
+import at.fhooe.recyclingserver.model.RecyclingInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -25,9 +27,11 @@ public class OpenFoodFactsProductClient implements ProductClient {
     private static final String BASE_URL = "https://de.openfoodfacts.org/";
 
     private final PackagingRepository packagingRepository;
+    private final RecyclingInfoRepository recyclingInfoRepository;
 
-    public OpenFoodFactsProductClient(PackagingRepository packagingRepository) {
+    public OpenFoodFactsProductClient(PackagingRepository packagingRepository, RecyclingInfoRepository recyclingInfoRepository) {
         this.packagingRepository = requireNonNull(packagingRepository);
+        this.recyclingInfoRepository = recyclingInfoRepository;
     }
 
     @Override
@@ -36,9 +40,11 @@ public class OpenFoodFactsProductClient implements ProductClient {
             LOG.info("Retrieving Packagings");
             packagingRepository.saveAll(getPackagings());
         }
-
         LOG.info("Retrieving Product");
-        return getProduct(code);
+        Optional<Product> product = getProduct(code);
+        LOG.info(product.toString());
+        return product;
+
     }
 
     private List<Packaging> getPackagings() {
@@ -52,7 +58,10 @@ public class OpenFoodFactsProductClient implements ProductClient {
                         0,
                         packagingDto.getId(),
                         packagingDto.getName(),
-                        true
+                        true,
+                        recyclingInfoRepository.findFirstByMaterial(packagingDto.getName())
+                                .map(RecyclingInfo::getDisposalMethod)
+                                .orElse("Unknown")
                 ));
             }
         }

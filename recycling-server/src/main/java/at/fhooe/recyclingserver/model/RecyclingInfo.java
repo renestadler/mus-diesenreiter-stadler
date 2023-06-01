@@ -7,27 +7,23 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Entity
 @Table
 @NoArgsConstructor
 @AllArgsConstructor
-public class Packaging {
+public class RecyclingInfo {
+
     @Id
-    @GeneratedValue
-    @JsonIgnore
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private long id;
 
-    @Column(unique = true, nullable = false)
-    private String code;
+    @Column(nullable = false)
+    private String material;
 
     @Column(nullable = false)
-    private String name;
-
-    @Column(nullable = false)
-    private boolean known;
-
-    @Transient
-    private String recyclingInfo;
+    private String disposalMethod;
 }

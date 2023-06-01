@@ -24,7 +24,7 @@ public class ProductController {
     @GetMapping("/product")
     public ResponseEntity<Product> getProduct(@RequestParam("barcode") String code) {
 
-        LOG.info("Getting product for bar code {}", code);
+        LOG.info("Getting product for barcode {}", code);
         return ResponseEntity.of(productLogic.getProduct(code));
     }
 }
