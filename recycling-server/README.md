@@ -41,7 +41,7 @@ GET http://localhost:8080/product?barcode=<code>
 
 For example, this request will fetch you some info on Nutella.
 ```http request
-GET using http://localhost:8080/product?barcode=3017620422003
+GET http://localhost:8080/product?barcode=3017620422003
 ```
 
 <br/>

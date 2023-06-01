@@ -35,4 +35,4 @@ async def retrieve_image(image_url):
 
 
 def retrieve_packaging(packaging_list):
-    return [item['name'] for item in packaging_list]
+    return {item['recyclingInfo'] for item in packaging_list}

@@ -192,6 +192,6 @@ INSERT INTO recycling_info (id, material, disposal_method) VALUES
                                         (190, 'Kunststoff/verschiedene Metalle', 'Gelber Sack oder Gelbe Tonne/Altmetallcontainer'),
                                         (191, 'Pizzakarton', 'Altpapiercontainer oder Papiertonne'),
 										(192, 'verpackung', 'Gelber Sack oder Gelbe Tonne'),
-                                        (193, 'PP 5 - Polypropylen', 'Gelber Sack oder Gelbe Tonne');
-
+                                        (193, 'PP 5 - Polypropylen', 'Gelber Sack oder Gelbe Tonne'),
+                                        (194, 'PET 1 - Polyethylenterephtalat','Gelber Sack oder Gelbe Tonne');
 
